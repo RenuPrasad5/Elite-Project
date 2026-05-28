@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-plus-jakarta), sans-serif;
+  --font-display: var(--font-cinzel), serif;
+  
+  /* Luxury Gold Accents */
+  --color-gold-50: #fbf8eb;
+  --color-gold-100: #f4ecce;
+  --color-gold-200: #e8d79c;
+  --color-gold-300: #dab961;
+  --color-gold-400: #cc9b33;
+  --color-gold-500: #b58322;
+  --color-gold-600: #946519;
+  --color-gold-700: #744b16;
+  --color-gold-800: #5c3b16;
+  --color-gold-900: #4d3115;
+  --color-gold-950: #2c190a;
+  
+  /* Luxury Emerald for up / positive metrics */
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+
+  /* Luxury Rose for down / negative metrics */
+  --color-rose-400: #fb7185;
+  --color-rose-500: #f43f5e;
+  --color-rose-600: #e11d48;
+}
+
+:root {
+  --background: #030303;
+  --foreground: #f4f4f5;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-plus-jakarta), sans-serif;
+}
+
+/* Custom glowing gold buttons and scrollbars */
+.glow-gold {
+  box-shadow: 0 0 20px rgba(181, 131, 34, 0.15);
+}
+
+.glow-gold-hover:hover {
+  box-shadow: 0 0 25px rgba(218, 185, 97, 0.35);
+  border-color: rgba(218, 185, 97, 0.6);
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel-premium {
+  background: linear-gradient(135deg, rgba(15, 15, 15, 0.8) 0%, rgba(5, 5, 5, 0.9) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(218, 185, 97, 0.15);
+}
