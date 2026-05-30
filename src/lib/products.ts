@@ -7,6 +7,7 @@ export interface Product {
   price: number;
   category: 'PDFs' | 'Trading Journals' | 'Excel Sheets' | 'Trading Tools';
   download_url: string;
+  storage_path: string;
   file_type: 'pdf' | 'xlsx' | 'zip' | 'indicator';
   badge?: string;
   features: string[];
@@ -28,6 +29,7 @@ export const LOCAL_PRODUCTS: Product[] = [
     price: 49.00,
     category: 'PDFs',
     download_url: '/downloads/institutional_liquidity_guide.pdf',
+    storage_path: 'institutional_liquidity_guide.pdf',
     file_type: 'pdf',
     badge: 'Hot',
     features: ['55 Pages of Institutional Concepts', 'Detailed Order Flow Charts', 'Step-by-step Execution Checklists']
@@ -39,6 +41,7 @@ export const LOCAL_PRODUCTS: Product[] = [
     price: 29.00,
     category: 'Trading Journals',
     download_url: '/downloads/alpha_trade_journal.pdf',
+    storage_path: 'alpha_trade_journal.pdf',
     file_type: 'pdf',
     badge: 'Best Seller',
     features: ['Notion Template & Printable PDF Included', 'Advanced Strategy Win Tracker', 'Emotional Bias Checklist']
@@ -50,6 +53,7 @@ export const LOCAL_PRODUCTS: Product[] = [
     price: 39.00,
     category: 'Excel Sheets',
     download_url: '/downloads/risk_margin_calculator.xlsx',
+    storage_path: 'risk_margin_calculator.xlsx',
     file_type: 'xlsx',
     badge: 'Essential',
     features: ['Isolated & Cross Margin Calculations', 'Instant Stop-Loss Position Sizing', 'Liquidation Risk Heat Index']
@@ -61,6 +65,7 @@ export const LOCAL_PRODUCTS: Product[] = [
     price: 149.00,
     category: 'Trading Tools',
     download_url: '/downloads/order_block_finder.zip',
+    storage_path: 'order_block_finder.zip',
     file_type: 'zip',
     badge: 'Premium',
     features: ['Automated PineScript v5 & MT5 code', 'Real-time Alert Notifications', 'Mitigated vs Unmitigated Zone Coloring']
@@ -72,6 +77,7 @@ export const LOCAL_PRODUCTS: Product[] = [
     price: 299.00,
     category: 'Trading Tools',
     download_url: '/downloads/hft_arbitrage_controller.zip',
+    storage_path: 'hft_arbitrage_controller.zip',
     file_type: 'zip',
     badge: 'Elite',
     features: ['Command-Line Interface (Python)', 'Dual exchange API connectors', 'Custom Telegram Webhook Alerts']

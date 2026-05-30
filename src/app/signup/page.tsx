@@ -18,6 +18,8 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [adminCode, setAdminCode] = useState('');
+  const [showAdminField, setShowAdminField] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,12 +42,31 @@ export default function SignupPage() {
     setError(null);
     setSuccess(null);
 
-    const { error: signUpError } = await signUp({ email, password });
+    const { error: signUpError } = await signUp({ 
+      email, 
+      password,
+      options: {
+        data: {
+          role: adminCode === 'EVIL_ADMIN_2026' ? 'admin' : 'user'
+        }
+      }
+    });
 
     if (signUpError) {
       setError(signUpError.message || 'An error occurred during registration.');
       setLoading(false);
     } else {
+      // Trigger Welcome Email
+      try {
+        await fetch('/api/emails/welcome', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+      } catch (err) {
+        console.error('Failed to trigger welcome email', err);
+      }
+
       setSuccess('Clearance request submitted. Please check your inbox for validation instructions or try logging in.');
       setLoading(false);
       // Optional: Clear form
@@ -80,7 +101,7 @@ export default function SignupPage() {
             EVIL ELITE
           </h2>
           <p className="text-xs text-zinc-500 tracking-wider uppercase mt-1">
-            Request Clearance Profile
+            Initialize Operator Profile
           </p>
         </div>
 
@@ -134,7 +155,7 @@ export default function SignupPage() {
 
           <div>
             <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2" htmlFor="password">
-              Security Cipher
+              Set Access Cipher
             </label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-zinc-500">
@@ -181,6 +202,41 @@ export default function SignupPage() {
             </div>
           </div>
 
+          <div className="pt-1">
+            <button
+              type="button"
+              onClick={() => setShowAdminField(!showAdminField)}
+              className="text-[10px] text-zinc-500 hover:text-gold-400 font-mono tracking-widest uppercase flex items-center gap-1 transition-colors cursor-pointer"
+            >
+              {showAdminField ? '[-] Hide Clearance Options' : '[+] Specify Clearance Role'}
+            </button>
+            
+            <AnimatePresence>
+              {showAdminField && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden mt-2"
+                >
+                  <label className="block text-[9px] font-semibold text-zinc-500 uppercase tracking-widest mb-1.5" htmlFor="admin-code">
+                    Admin Clearance Cipher
+                  </label>
+                  <input
+                    id="admin-code"
+                    type="password"
+                    placeholder="Enter EVIL_ADMIN_2026 for admin role"
+                    value={adminCode}
+                    onChange={(e) => setAdminCode(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#020202] border border-zinc-900 focus:border-gold-500/30 rounded-lg text-zinc-300 placeholder-zinc-700 focus:outline-none transition-colors text-xs font-mono"
+                    disabled={loading || authLoading}
+                  />
+                  <p className="text-[9px] text-zinc-600 font-mono mt-1">Specify authorization keys if elevating clearance level.</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <button
             type="submit"
             disabled={loading || authLoading}
@@ -190,7 +246,7 @@ export default function SignupPage() {
               <div className="w-5 h-5 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
-                Submit Request
+                Submit Clearance Request
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
@@ -199,9 +255,9 @@ export default function SignupPage() {
 
         <div className="mt-8 text-center border-t border-zinc-900 pt-6">
           <p className="text-sm text-zinc-400">
-            Already authorized?{' '}
+            Already have an active node?{' '}
             <Link href="/login" className="text-gold-400 hover:text-gold-300 font-medium hover:underline transition-all">
-              Establish Session
+              Establish Handshake
             </Link>
           </p>
         </div>

@@ -60,7 +60,7 @@ function LoginFormContent() {
           EVIL ELITE
         </h2>
         <p className="text-xs text-zinc-500 tracking-wider uppercase mt-1">
-          Institutional Derivative Gateway
+          Secure Node Authentication
         </p>
       </div>
 

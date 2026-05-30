@@ -8,6 +8,8 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  role: string;
+  isAdmin: boolean;
   signIn: (credentials: SignInWithPasswordCredentials) => Promise<{ error: any }>;
   signUp: (credentials: SignUpWithPasswordCredentials) => Promise<{ error: any }>;
   signOut: () => Promise<{ error: any }>;
@@ -95,8 +97,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const role = user?.user_metadata?.role || 'user';
+  const isAdmin = role === 'admin';
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, role, isAdmin, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );

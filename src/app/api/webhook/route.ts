@@ -1,7 +1,13 @@
+// Force rebuild
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import Stripe from 'stripe';
+import { sendPlatformEmail } from '@/lib/email';
+import { PurchaseConfirmationEmail } from '@/emails/PurchaseConfirmation';
+import { SubscriptionRenewalEmail } from '@/emails/SubscriptionRenewal';
+import { LOCAL_PRODUCTS } from '@/lib/products';
+
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -65,6 +71,16 @@ export async function POST(req: Request) {
             console.error('Failed to update subscription in database:', error.message);
             return NextResponse.json({ error: `DB Write Error: ${error.message}` }, { status: 500 });
           }
+
+          // Trigger Welcome/Renewal Email
+          const customerEmail = session.customer_details?.email;
+          if (customerEmail) {
+            sendPlatformEmail({
+              to: customerEmail,
+              subject: `Clearance Maintained: ${planId} Tier`,
+              template: SubscriptionRenewalEmail({ tierName: planId, nextBillingDate: new Date(currentPeriodEnd).toLocaleDateString() }),
+            });
+          }
         }
 
         // Handle One-Time Digital Marketplace purchases
@@ -81,6 +97,17 @@ export async function POST(req: Request) {
           if (error && !error.message.includes('duplicate key')) {
             console.error('Failed to register product purchase in database:', error.message);
             return NextResponse.json({ error: `DB Write Error: ${error.message}` }, { status: 500 });
+          }
+
+          // Trigger Purchase Confirmation Email
+          const customerEmail = session.customer_details?.email;
+          const product = LOCAL_PRODUCTS.find(p => p.id === Number(productId));
+          if (customerEmail && product) {
+            sendPlatformEmail({
+              to: customerEmail,
+              subject: `Asset Unlocked: ${product.title}`,
+              template: PurchaseConfirmationEmail({ productName: product.title, amount: session.amount_total ? (session.amount_total / 100).toFixed(2) : product.price.toFixed(2) }),
+            });
           }
         }
         break;

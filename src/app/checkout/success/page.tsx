@@ -14,10 +14,10 @@ function SuccessContent() {
   
   const type = searchParams.get('type');
   const tier = searchParams.get('tier') as 'Starter' | 'Pro' | 'Elite' | null;
-  const productId = searchParams.get('productId');
+  const productIdsParam = searchParams.get('productIds') || searchParams.get('productId');
   const sessionId = searchParams.get('session_id') || `sim_sess_${Math.random().toString(36).substring(7)}`;
 
-  const [purchasedProduct, setPurchasedProduct] = useState<Product | null>(null);
+  const [purchasedProducts, setPurchasedProducts] = useState<Product[]>([]);
   const [syncing, setSyncing] = useState(true);
 
   useEffect(() => {
@@ -26,14 +26,18 @@ function SuccessContent() {
       
       try {
         // Sync one-time digital purchase locally if simulated checkout
-        if (type === 'product' && productId) {
-          // Resolve product title
+        if (type === 'product' && productIdsParam) {
+          const ids = productIdsParam.split(',').map(Number);
+          
+          // Resolve product titles
           const allProducts = await getProducts();
-          const p = allProducts.find((item) => item.id === Number(productId));
-          if (p) setPurchasedProduct(p);
+          const purchased = allProducts.filter((item) => ids.includes(item.id));
+          if (purchased.length > 0) setPurchasedProducts(purchased);
 
           // Force client local storage fallback sync (guarantees local sync instantly)
-          await purchaseProduct(user.id, Number(productId));
+          for (const id of ids) {
+            await purchaseProduct(user.id, id);
+          }
         }
 
         // Sync subscription tier locally if simulated
@@ -49,7 +53,7 @@ function SuccessContent() {
     }
 
     syncClearance();
-  }, [user, type, productId, tier]);
+  }, [user, type, productIdsParam, tier]);
 
   return (
     <div className="min-h-screen bg-[#020202] text-zinc-100 flex flex-col justify-center items-center px-4 relative overflow-hidden">
@@ -104,10 +108,14 @@ function SuccessContent() {
               </div>
             )}
 
-            {type === 'product' && purchasedProduct && (
+            {type === 'product' && purchasedProducts.length > 0 && (
               <div className="flex justify-between">
-                <span className="text-zinc-500">Unlocked Asset:</span>
-                <span className="text-zinc-200 font-semibold truncate max-w-[180px]">{purchasedProduct.title}</span>
+                <span className="text-zinc-500">Unlocked Asset(s):</span>
+                <span className="text-zinc-200 font-semibold truncate max-w-[180px]">
+                  {purchasedProducts.length === 1 
+                    ? purchasedProducts[0].title 
+                    : `${purchasedProducts.length} Items Cleared`}
+                </span>
               </div>
             )}
 

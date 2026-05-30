@@ -29,13 +29,48 @@ function isTokenValid(token: string | undefined): boolean {
   }
 }
 
+function getUserRole(token: string | undefined): string {
+  if (!token) return 'user';
+  
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return 'user';
+    
+    const base64Url = parts[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    const payload = JSON.parse(jsonPayload);
+    return payload.user_metadata?.role || 'user';
+  } catch (e) {
+    return 'user';
+  }
+}
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('sb-access-token')?.value;
   const hasValidToken = isTokenValid(token);
+  const userRole = getUserRole(token);
 
   const isProtectedRoute = pathname.startsWith('/dashboard');
+  const isAdminRoute = pathname.startsWith('/admin');
   const isAuthRoute = pathname === '/login' || pathname === '/signup';
+
+  if (isAdminRoute) {
+    if (!hasValidToken) {
+      const redirectUrl = new URL('/login', request.url);
+      redirectUrl.searchParams.set('redirectTo', pathname);
+      return NextResponse.redirect(redirectUrl);
+    }
+    if (userRole !== 'admin') {
+      return NextResponse.redirect(new URL('/dashboard?error=unauthorized_admin', request.url));
+    }
+  }
 
   if (isProtectedRoute && !hasValidToken) {
     // Redirect to login page if trying to access dashboard while logged out
@@ -46,7 +81,10 @@ export function proxy(request: NextRequest) {
   }
 
   if (isAuthRoute && hasValidToken) {
-    // Redirect to dashboard if trying to access login/signup while already logged in
+    // Redirect to dashboard/admin if trying to access login/signup while already logged in
+    if (userRole === 'admin') {
+      return NextResponse.redirect(new URL('/admin', request.url));
+    }
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

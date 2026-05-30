@@ -28,17 +28,20 @@ ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.purchases ENABLE ROW LEVEL SECURITY;
 
 -- 4. RLS Policies for Products
+DROP POLICY IF EXISTS "Allow public read access to products" ON public.products;
 CREATE POLICY "Allow public read access to products" 
     ON public.products 
     FOR SELECT 
     USING (true);
 
 -- 5. RLS Policies for Purchases
+DROP POLICY IF EXISTS "Allow users to view their own purchases" ON public.purchases;
 CREATE POLICY "Allow users to view their own purchases" 
     ON public.purchases 
     FOR SELECT 
     USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Allow users to insert their own purchases" ON public.purchases;
 CREATE POLICY "Allow users to insert their own purchases" 
     ON public.purchases 
     FOR INSERT 
@@ -116,6 +119,7 @@ CREATE TABLE IF NOT EXISTS public.subscriptions (
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for Subscriptions
+DROP POLICY IF EXISTS "Allow users to view their own subscription status" ON public.subscriptions;
 CREATE POLICY "Allow users to view their own subscription status"
     ON public.subscriptions
     FOR SELECT

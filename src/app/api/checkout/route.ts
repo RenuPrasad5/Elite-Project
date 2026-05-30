@@ -4,7 +4,7 @@ import { getProducts } from '@/lib/products';
 
 const PLAN_PRICES: Record<string, number> = {
   Starter: 29.00,
-  Pro: 79.00,
+  Pro: 99.00,
   Elite: 199.00,
 };
 
@@ -47,7 +47,7 @@ async function getOrCreatePriceForPlan(planId: string, priceAmount: number) {
 
 export async function POST(req: Request) {
   try {
-    const { productId, planId, userId, email } = await req.json();
+    const { productId, planId, userId, email, productIds } = await req.json();
 
     if (!userId || !email) {
       return NextResponse.json({ error: 'Missing operator credentials (userId or email).' }, { status: 400 });
@@ -97,39 +97,50 @@ export async function POST(req: Request) {
       return NextResponse.json({ url: session.url });
     }
 
-    // 2. Handle One-Time Digital Product Checkout Flow
-    if (productId) {
+    // 2. Handle Cart/Multiple Products Checkout Flow
+    if (productId || productIds) {
       const allProducts = await getProducts();
-      const product = allProducts.find((p) => p.id === Number(productId));
-
-      if (!product) {
-        return NextResponse.json({ error: 'Requested digital asset not found in database.' }, { status: 404 });
+      
+      const ids = productIds || (productId ? [productId] : []);
+      
+      if (ids.length === 0) {
+        return NextResponse.json({ error: 'No products provided for checkout.' }, { status: 400 });
       }
 
-      console.log(`Generating Stripe checkout session for product: ${product.title} for ${email}`);
+      const products = allProducts.filter((p) => ids.map(Number).includes(p.id));
+
+      if (products.length === 0) {
+        return NextResponse.json({ error: 'Requested digital assets not found in database.' }, { status: 404 });
+      }
+
+      console.log(`Generating Stripe checkout session for ${products.length} product(s) for ${email}`);
+
+      const lineItems = products.map(product => ({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: product.title,
+            description: product.description,
+          },
+          unit_amount: Math.round(product.price * 100),
+        },
+        quantity: 1, // Digital products usually have qty 1
+      }));
+
+      // We pass the product IDs as a comma-separated string in the metadata
+      const productIdsString = products.map(p => p.id).join(',');
 
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         mode: 'payment',
         customer_email: email,
-        line_items: [
-          {
-            price_data: {
-              currency: 'usd',
-              product_data: {
-                name: product.title,
-                description: product.description,
-              },
-              unit_amount: Math.round(product.price * 100),
-            },
-            quantity: 1,
-          },
-        ],
-        success_url: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}&type=product&productId=${productId}`,
+        line_items: lineItems,
+        // Send them to success with all product IDs
+        success_url: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}&type=product&productIds=${productIdsString}`,
         cancel_url: `${appUrl}/checkout/cancel?type=product`,
         metadata: {
           userId,
-          productId: String(productId),
+          productIds: productIdsString,
           type: 'product',
         },
       });
@@ -137,7 +148,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ url: session.url });
     }
 
-    return NextResponse.json({ error: 'Requested checkouts must specify a product ID or subscription tier.' }, { status: 400 });
+    return NextResponse.json({ error: 'Requested checkouts must specify product ID(s) or subscription tier.' }, { status: 400 });
   } catch (err: any) {
     console.error('Error generating Stripe Checkout session:', err);
     return NextResponse.json({ error: err.message || 'Payment engine encounter internal crash.' }, { status: 500 });
