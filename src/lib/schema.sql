@@ -125,3 +125,119 @@ CREATE POLICY "Allow users to view their own subscription status"
     FOR SELECT
     USING (auth.uid() = user_id);
 
+-- 8. Create Trades Table (Trading Journal)
+CREATE TABLE IF NOT EXISTS public.trades (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    asset TEXT NOT NULL,
+    side TEXT NOT NULL CHECK (side IN ('Long', 'Short')),
+    pnl NUMERIC NOT NULL,
+    rr NUMERIC NOT NULL,
+    setup TEXT NOT NULL,
+    emotion TEXT NOT NULL,
+    mistake TEXT NOT NULL,
+    tags TEXT[] NOT NULL DEFAULT '{}',
+    screenshot_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Enable RLS for Trades
+ALTER TABLE public.trades ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for Trades
+DROP POLICY IF EXISTS "Allow users to view their own trades" ON public.trades;
+CREATE POLICY "Allow users to view their own trades"
+    ON public.trades
+    FOR SELECT
+    USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Allow users to insert their own trades" ON public.trades;
+CREATE POLICY "Allow users to insert their own trades"
+    ON public.trades
+    FOR INSERT
+    WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Allow users to update their own trades" ON public.trades;
+CREATE POLICY "Allow users to update their own trades"
+    ON public.trades
+    FOR UPDATE
+    USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Allow users to delete their own trades" ON public.trades;
+CREATE POLICY "Allow users to delete their own trades"
+    ON public.trades
+    FOR DELETE
+    USING (auth.uid() = user_id);
+
+-- 9. Storage Bucket for Trade Screenshots
+-- Note: You may need to run this in the Supabase SQL Editor if storage schema differs.
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('trade-screenshots', 'trade-screenshots', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- RLS Policies for Storage Bucket
+DROP POLICY IF EXISTS "Allow public read of trade screenshots" ON storage.objects;
+CREATE POLICY "Allow public read of trade screenshots"
+    ON storage.objects
+    FOR SELECT
+    USING (bucket_id = 'trade-screenshots');
+
+DROP POLICY IF EXISTS "Allow authenticated uploads to trade screenshots" ON storage.objects;
+CREATE POLICY "Allow authenticated uploads to trade screenshots"
+    ON storage.objects
+    FOR INSERT
+    WITH CHECK (
+        bucket_id = 'trade-screenshots' AND 
+        auth.role() = 'authenticated'
+    );
+
+
+-- 10. Create Profiles Table (Community Layer)
+CREATE TABLE IF NOT EXISTS public.profiles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE, -- Nullable to allow system/bot seed profiles
+    handle TEXT UNIQUE NOT NULL,
+    bio TEXT,
+    discord_username TEXT,
+    win_rate NUMERIC DEFAULT 0,
+    total_pnl NUMERIC DEFAULT 0,
+    global_rank INTEGER,
+    badges TEXT[] NOT NULL DEFAULT '{}',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    CONSTRAINT unique_user_profile UNIQUE (user_id)
+);
+
+-- Enable RLS for Profiles
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for Profiles
+DROP POLICY IF EXISTS "Allow public read access to profiles" ON public.profiles;
+CREATE POLICY "Allow public read access to profiles"
+    ON public.profiles
+    FOR SELECT
+    USING (true);
+
+DROP POLICY IF EXISTS "Allow users to insert their own profile" ON public.profiles;
+CREATE POLICY "Allow users to insert their own profile"
+    ON public.profiles
+    FOR INSERT
+    WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Allow users to update their own profile" ON public.profiles;
+CREATE POLICY "Allow users to update their own profile"
+    ON public.profiles
+    FOR UPDATE
+    USING (auth.uid() = user_id);
+
+-- Seed Initial Profiles for Leaderboard
+INSERT INTO public.profiles (user_id, handle, bio, win_rate, total_pnl, global_rank, badges)
+-- Using NULL for user_id so we don't violate foreign key constraints for dummy leaderboard data
+VALUES 
+    (NULL, 'Phantom_FX', 'Top step prop firm trader. NQ exclusively.', 78.5, 142500, 1, ARRAY['Whale', 'Sniper', 'Funded']),
+    (NULL, 'Ghost_Trader', 'Price action purist.', 64.2, 98200, 2, ARRAY['Funded', 'Consistent']),
+    (NULL, 'VoidCapital', 'Institutional order flow.', 71.0, 85100, 3, ARRAY['Sniper', 'Funded']),
+    (NULL, 'NQ_Assassin', 'Live fast, trade hard.', 58.0, 62450, 4, ARRAY['Funded'])
+ON CONFLICT (handle) DO NOTHING;
+
+

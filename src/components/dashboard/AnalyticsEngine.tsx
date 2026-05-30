@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Activity, Brain, TrendingUp, AlertTriangle, Lightbulb } from 'lucide-react';
+import { Activity, Brain, TrendingUp, TrendingDown, AlertTriangle, Lightbulb } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ReferenceLine } from 'recharts';
 
 interface Trade {

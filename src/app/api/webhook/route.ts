@@ -7,6 +7,7 @@ import { sendPlatformEmail } from '@/lib/email';
 import { PurchaseConfirmationEmail } from '@/emails/PurchaseConfirmation';
 import { SubscriptionRenewalEmail } from '@/emails/SubscriptionRenewal';
 import { LOCAL_PRODUCTS } from '@/lib/products';
+import * as React from 'react';
 
 
 export async function POST(req: Request) {
@@ -78,7 +79,7 @@ export async function POST(req: Request) {
             sendPlatformEmail({
               to: customerEmail,
               subject: `Clearance Maintained: ${planId} Tier`,
-              template: SubscriptionRenewalEmail({ tierName: planId, nextBillingDate: new Date(currentPeriodEnd).toLocaleDateString() }),
+              template: React.createElement(SubscriptionRenewalEmail, { tierName: planId, nextBillingDate: new Date(currentPeriodEnd).toLocaleDateString() }),
             });
           }
         }
@@ -106,7 +107,7 @@ export async function POST(req: Request) {
             sendPlatformEmail({
               to: customerEmail,
               subject: `Asset Unlocked: ${product.title}`,
-              template: PurchaseConfirmationEmail({ productName: product.title, amount: session.amount_total ? (session.amount_total / 100).toFixed(2) : product.price.toFixed(2) }),
+              template: React.createElement(PurchaseConfirmationEmail, { productName: product.title, amount: session.amount_total ? (session.amount_total / 100).toFixed(2) : product.price.toFixed(2) }),
             });
           }
         }

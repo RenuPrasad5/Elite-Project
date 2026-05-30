@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { sendPlatformEmail } from '@/lib/email';
 import { AbandonedCheckoutEmail } from '@/emails/AbandonedCheckout';
 import { UpsellCampaignEmail } from '@/emails/UpsellCampaign';
+import * as React from 'react';
 
 export async function POST(req: Request) {
   try {
@@ -30,7 +31,10 @@ export async function POST(req: Request) {
       const result = await sendPlatformEmail({
         to: email,
         subject: 'Action Required: Incomplete Authorization',
-        template: AbandonedCheckoutEmail({ productName: data?.productName, checkoutUrl: data?.checkoutUrl || `${process.env.NEXT_PUBLIC_APP_URL}/cart` })
+        template: React.createElement(AbandonedCheckoutEmail, { 
+          productName: data?.productName, 
+          checkoutUrl: data?.checkoutUrl || `${process.env.NEXT_PUBLIC_APP_URL}/cart` 
+        })
       });
       success = result.success;
       errorMsg = result.error;
@@ -38,7 +42,7 @@ export async function POST(req: Request) {
       const result = await sendPlatformEmail({
         to: email,
         subject: 'Notice: Elite Clearance Authorized',
-        template: UpsellCampaignEmail({})
+        template: React.createElement(UpsellCampaignEmail, {})
       });
       success = result.success;
       errorMsg = result.error;

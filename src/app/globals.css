@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@plugin "@tailwindcss/typography";
 @theme {
   --font-sans: var(--font-plus-jakarta), sans-serif;
   --font-display: var(--font-cinzel), serif;

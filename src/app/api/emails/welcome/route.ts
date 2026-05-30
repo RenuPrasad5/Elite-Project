@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { sendPlatformEmail } from '@/lib/email';
 import { WelcomeEmail } from '@/emails/WelcomeOnboarding';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import * as React from 'react';
 
 export async function POST(req: Request) {
   try {
@@ -26,7 +27,7 @@ export async function POST(req: Request) {
     const { success, error: sendError } = await sendPlatformEmail({
       to: email,
       subject: 'Clearance Granted: Welcome to Evil Elite',
-      template: WelcomeEmail({ userEmail: email })
+      template: React.createElement(WelcomeEmail, { userEmail: email })
     });
 
     if (!success) {
