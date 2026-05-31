@@ -1,177 +1,159 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { Mail, Lock, ArrowRight, Eye, EyeOff, ShieldAlert, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Lock, Mail, ArrowRight, AlertCircle, Loader2, ShieldCheck } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { PublicNavbar } from '@/components/layout/PublicNavbar';
 
-function LoginFormContent() {
+export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const { signIn, loading: authLoading } = useAuth();
+  const { signIn } = useAuth();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const redirectTo = searchParams.get('redirectTo') || '/dashboard';
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError('Please fill in all fields.');
-      return;
-    }
-
-    setLoading(true);
     setError(null);
+    setLoading(true);
 
-    const { error: signInError } = await signIn({ email, password });
-
-    if (signInError) {
-      setError(signInError.message || 'Invalid email or password.');
+    try {
+      const { error: signInError } = await signIn({ email, password });
+      
+      if (signInError) {
+        setError(signInError.message || 'Invalid email or password.');
+      } else {
+        router.push('/dashboard');
+      }
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred.');
+    } finally {
       setLoading(false);
-    } else {
-      router.push(redirectTo);
-      router.refresh();
     }
   };
 
   return (
-    <div className="w-full max-w-md glass-panel-premium p-8 rounded-2xl glow-gold relative overflow-hidden">
-      {/* Decorative top gold line */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold-400 to-transparent" />
+    <div className="min-h-screen bg-[#050505] text-zinc-100 flex flex-col font-sans select-none">
+      <PublicNavbar />
       
-      {/* Logo Area */}
-      <div className="flex flex-col items-center mb-8">
+      {/* Background Ambience */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.03),transparent_50%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none opacity-20" />
+
+      <main className="flex-1 flex items-center justify-center p-6 relative z-10">
         <motion.div 
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-4 flex items-center gap-4"
+          className="w-full max-w-[440px]"
         >
-          <img src="/logo.png" alt="EvilElite Trading Logo" className="h-16 w-auto object-contain drop-shadow-md" />
-          <span className="font-display font-extrabold tracking-[0.15em] text-2xl text-zinc-100 uppercase leading-none">EVIL ELITE</span>
+          {/* Logo & Header */}
+          <div className="text-center mb-8 space-y-4">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-[#0B0B0B] border border-zinc-800 shadow-[0_0_30px_rgba(212,175,55,0.15)] mb-2">
+              <ShieldCheck className="w-6 h-6 text-gold-400" />
+            </div>
+            <h1 className="text-3xl font-display font-extrabold uppercase tracking-widest text-zinc-100">
+              Operator <span className="text-gold-400">Login</span>
+            </h1>
+            <p className="text-xs font-mono text-zinc-500 tracking-wider">
+              ENTER YOUR CREDENTIALS TO ACCESS THE TERMINAL
+            </p>
+          </div>
+
+          {/* Form Card */}
+          <div className="bg-[#0B0B0B] border border-zinc-800/80 p-8 rounded-sm shadow-2xl relative overflow-hidden backdrop-blur-sm">
+            {/* Top gold border highlight */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold-500/80 to-transparent" />
+
+            <form onSubmit={handleLogin} className="space-y-5">
+              
+              {/* Error Alert */}
+              {error && (
+                <div className="p-3 bg-rose-950/30 border border-rose-900/50 rounded-sm flex items-start gap-2.5 animate-in fade-in slide-in-from-top-2">
+                  <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                  <p className="text-[11px] font-mono text-rose-400 leading-relaxed">{error}</p>
+                </div>
+              )}
+
+              {/* Email Input */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold font-mono tracking-widest text-zinc-400 uppercase">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-4 w-4 text-zinc-600" />
+                  </div>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full bg-[#111111] border border-zinc-800 focus:border-gold-500/50 text-zinc-200 text-sm rounded-sm py-2.5 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-gold-500/50 transition-all font-mono"
+                    placeholder="operator@evilelite.com"
+                  />
+                </div>
+              </div>
+
+              {/* Password Input */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-bold font-mono tracking-widest text-zinc-400 uppercase">
+                    Master Password
+                  </label>
+                  <Link href="/reset-password" className="text-[9px] font-mono text-gold-500 hover:text-gold-400 transition-colors">
+                    FORGOT PASSWORD?
+                  </Link>
+                </div>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-4 w-4 text-zinc-600" />
+                  </div>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="w-full bg-[#111111] border border-zinc-800 focus:border-gold-500/50 text-zinc-200 text-sm rounded-sm py-2.5 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-gold-500/50 transition-all font-mono"
+                    placeholder="••••••••••••"
+                  />
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 mt-4 bg-gradient-to-r from-gold-600 to-gold-500 hover:from-gold-500 hover:to-gold-400 text-zinc-950 text-xs font-bold uppercase tracking-widest rounded-sm transition-all cursor-pointer glow-gold shadow-sm flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    AUTHENTICATING...
+                  </>
+                ) : (
+                  <>
+                    INITIALIZE SESSION <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* Footer Link */}
+          <div className="mt-6 text-center text-[11px] font-mono text-zinc-500 tracking-wider">
+            DON'T HAVE AN ALLOCATION YET?{' '}
+            <Link href="/signup" className="text-gold-500 hover:text-gold-400 font-bold border-b border-transparent hover:border-gold-500 transition-all">
+              ENROLL HERE
+            </Link>
+          </div>
         </motion.div>
-        <p className="text-xs text-zinc-500 tracking-wider uppercase mt-1">
-          Secure Node Authentication
-        </p>
-      </div>
-
-      <AnimatePresence mode="wait">
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="flex items-start gap-3 p-4 mb-6 rounded-lg bg-rose-950/40 border border-rose-500/20 text-rose-200 text-sm"
-          >
-            <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-            <span>{error}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-2" htmlFor="email">
-            Security Email
-          </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-zinc-500">
-              <Mail className="w-5 h-5" />
-            </span>
-            <input
-              id="email"
-              type="email"
-              placeholder="operator@evilelite.club"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-zinc-950 border border-zinc-800 rounded-lg text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-gold-500/50 transition-colors text-sm"
-              disabled={loading || authLoading}
-              required
-            />
-          </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-widest" htmlFor="password">
-              Access Cipher
-            </label>
-          </div>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-zinc-500">
-              <Lock className="w-5 h-5" />
-            </span>
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="••••••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-10 pr-10 py-3 bg-zinc-950 border border-zinc-800 rounded-lg text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-gold-500/50 transition-colors text-sm"
-              disabled={loading || authLoading}
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-500 hover:text-zinc-300"
-            >
-              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </button>
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading || authLoading}
-          className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-gold-600 to-gold-500 hover:from-gold-500 hover:to-gold-400 text-zinc-950 font-bold rounded-lg transition-all duration-300 flex items-center justify-center gap-2 glow-gold glow-gold-hover disabled:opacity-50 disabled:pointer-events-none text-sm cursor-pointer"
-        >
-          {loading ? (
-            <div className="w-5 h-5 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
-          ) : (
-            <>
-              Initialize Session
-              <ArrowRight className="w-4 h-4" />
-            </>
-          )}
-        </button>
-      </form>
-
-      <div className="mt-8 text-center border-t border-zinc-900 pt-6">
-        <p className="text-sm text-zinc-400">
-          New operator?{' '}
-          <Link href="/signup" className="text-gold-400 hover:text-gold-300 font-medium hover:underline transition-all">
-            Request Clearance
-          </Link>
-        </p>
-      </div>
-    </div>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <div className="flex-1 flex flex-col justify-center items-center px-4 py-12 bg-[#020202] relative">
-      {/* Abstract dark luxury backgrounds */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(181,131,32,0.03),transparent_60%)] pointer-events-none" />
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gold-950/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gold-900/5 rounded-full blur-[120px] pointer-events-none" />
-      
-      <Suspense fallback={
-        <div className="flex flex-col items-center justify-center text-zinc-400">
-          <div className="w-10 h-10 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mb-4" />
-          <span className="text-xs uppercase tracking-widest font-mono">Authenticating...</span>
-        </div>
-      }>
-        <LoginFormContent />
-      </Suspense>
+      </main>
     </div>
   );
 }

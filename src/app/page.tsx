@@ -31,7 +31,8 @@ import {
   FileText,
   Check,
   Sparkles,
-  Mail
+  Mail,
+  UserCheck
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AreaChart, Area, LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ComposedChart, Cell } from 'recharts';
@@ -810,7 +811,7 @@ export default function Home() {
                   </div>
                   
                   {mounted && (
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
                       <ComposedChart data={terminalChartData} margin={{ top: 12, right: 5, left: -25, bottom: 0 }}>
                         <defs>
                           <linearGradient id="dbProfitGrad" x1="0" y1="0" x2="0" y2="1">
@@ -1416,8 +1417,88 @@ export default function Home() {
         </div>
       </section>
 
+      {/* HOW IT WORKS SECTION */}
+      <section className="bg-[#050505] py-20 md:py-28 z-20 relative w-full border-t border-zinc-900/60 font-mono">
+        <div className="max-w-[1512px] mx-auto px-6 md:px-12 space-y-16">
+          <div className="text-center max-w-2xl mx-auto space-y-4">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-950/20 border border-gold-500/10 text-gold-400 text-[9px] uppercase tracking-widest block mx-auto font-bold animate-pulse">
+              <Zap className="w-3.5 h-3.5 shrink-0 text-gold-400" />
+              <span>Operational Pathway</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-display font-extrabold tracking-widest uppercase bg-clip-text text-transparent bg-gradient-to-b from-zinc-50 to-zinc-400">
+              How It Works
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-[1px] bg-zinc-900/80 pointer-events-none" />
+            
+            {[
+              { num: '01', title: 'Acquire Clearance', desc: 'Select your institutional allocation tier and initiate the evaluation parameters.', icon: ShoppingBag },
+              { num: '02', title: 'Prove The Edge', desc: 'Execute trades following strict drawdown protocols to pass the clearance node.', icon: Activity },
+              { num: '03', title: 'Extract Capital', desc: 'Secure up to 90% profit splits with sovereign payouts bi-weekly.', icon: DollarSign }
+            ].map((step, idx) => {
+              const StepIcon = step.icon;
+              return (
+                <div key={idx} className="relative z-10 flex flex-col items-center text-center space-y-4 group">
+                  <div className="w-24 h-24 rounded-full bg-[#0B0B0B] border border-zinc-800 group-hover:border-gold-500/40 flex items-center justify-center transition-colors duration-300 shadow-2xl relative">
+                    <span className="absolute -top-2 -right-2 text-[10px] font-black text-gold-400 bg-gold-950 px-2 py-0.5 rounded border border-gold-500/20">{step.num}</span>
+                    <StepIcon className="w-8 h-8 text-zinc-500 group-hover:text-gold-400 transition-colors duration-300" />
+                  </div>
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-200">{step.title}</h3>
+                  <p className="text-xs text-zinc-500 font-sans max-w-[250px] leading-relaxed">{step.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS SECTION */}
+      <section className="bg-[#020202] py-20 md:py-28 z-20 relative w-full border-t border-zinc-900/60 font-mono">
+        <div className="max-w-[1512px] mx-auto px-6 md:px-12 space-y-16">
+          <div className="text-center max-w-2xl mx-auto space-y-4">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-950/20 border border-gold-500/10 text-gold-400 text-[9px] uppercase tracking-widest block mx-auto font-bold animate-pulse">
+              <UserCheck className="w-3.5 h-3.5 shrink-0 text-gold-400" />
+              <span>Verified Operators</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-display font-extrabold tracking-widest uppercase bg-clip-text text-transparent bg-gradient-to-b from-zinc-50 to-zinc-400">
+              Elite Network Feedback
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { name: 'Michael T.', amount: '$24,500', desc: 'The latency execution is unmatched. I passed Phase 2 in 4 days strictly due to zero slippage on XAUUSD.', rank: 'Tier IV Funded' },
+              { name: 'Sarah L.', amount: '$18,200', desc: 'Best drawdown rules in the industry. The Risk Calculator template alone paid for the entire challenge.', rank: 'Tier III Funded' },
+              { name: 'David R.', amount: '$42,900', desc: 'Bi-weekly crypto payouts hitting perfectly. Their automated dashboard makes tracking my daily limits completely stress-free.', rank: 'Elite Node Operator' }
+            ].map((review, idx) => (
+              <div key={idx} className="bg-[#0B0B0B] border border-zinc-800/80 hover:border-gold-500/20 p-6 rounded-sm space-y-4 transition-colors">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center font-black text-zinc-500 rounded-full">{review.name.charAt(0)}</div>
+                    <div>
+                      <span className="block text-[11px] font-bold text-zinc-200">{review.name}</span>
+                      <span className="block text-[8px] text-gold-400 uppercase tracking-widest">{review.rank}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[7px] text-zinc-500 uppercase">Recent Payout</span>
+                    <span className="text-[11px] font-bold text-emerald-400">{review.amount}</span>
+                  </div>
+                </div>
+                <p className="text-[10px] text-zinc-400 font-sans leading-relaxed italic">"{review.desc}"</p>
+                <div className="flex gap-1">
+                  {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 text-gold-500 fill-gold-500" />)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* PREMIUM SaaS PRICING SECTION */}
-      <section id="pricing" className="bg-[#050505] py-20 md:py-28 z-20 relative w-full">
+      <section id="pricing" className="bg-[#050505] py-20 md:py-28 z-20 relative w-full border-t border-zinc-900/60">
         <div className="max-w-[1512px] mx-auto px-6 md:px-12 space-y-16">
           
           {/* Header block */}
