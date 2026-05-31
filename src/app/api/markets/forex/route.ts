@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
     // Twelve Data /quote endpoint gets current price, change, percent change, high, low, close, volume
     const twelveDataEndpoint = `https://api.twelvedata.com/quote?symbol=${encodeURIComponent(symbols)}&apikey=${apiKey}`;
     
-    const response = await fetch(twelvedataEndpoint, {
+    const response = await fetch(twelveDataEndpoint, {
       method: 'GET',
       headers: {
         'Accept': 'application/json'

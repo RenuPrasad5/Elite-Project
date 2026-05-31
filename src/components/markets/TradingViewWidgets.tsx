@@ -50,6 +50,7 @@ export const TVMarketOverview = () => (
       tabs={[
         {
           title: "Indices",
+          originalTitle: "Indices",
           symbols: [
             { s: "FOREXCOM:SPXUSD", d: "S&P 500" },
             { s: "FOREXCOM:NSXUSD", d: "US 100" },
@@ -59,6 +60,7 @@ export const TVMarketOverview = () => (
         },
         {
           title: "Commodities",
+          originalTitle: "Commodities",
           symbols: [
             { s: "OANDA:XAUUSD", d: "Gold" },
             { s: "OANDA:XAGUSD", d: "Silver" },
@@ -67,6 +69,7 @@ export const TVMarketOverview = () => (
         },
         {
           title: "Bonds",
+          originalTitle: "Bonds",
           symbols: [
             { s: "CME:GE1!", d: "Eurodollar" },
             { s: "CBOT:ZB1!", d: "T-Bond" },
@@ -118,7 +121,7 @@ export const TVScreener = ({ market = "crypto" }: { market?: "crypto" | "forex" 
       height={600} 
       defaultColumn="overview" 
       defaultScreen="general" 
-      market={market}
+      market={market as any}
     />
   </ClientOnly>
 );
