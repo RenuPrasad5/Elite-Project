@@ -455,13 +455,9 @@ export default function AdminHubPage() {
           
           {/* Logo & Node name */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-gold-600 to-gold-400 flex items-center justify-center glow-gold">
-                <span className="text-zinc-950 font-display font-bold text-xs">EE</span>
-              </div>
-              <span className="font-display font-bold tracking-widest text-base bg-gradient-to-b from-zinc-100 to-zinc-400 bg-clip-text text-transparent">
-                ELITE HQ
-              </span>
+            <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push('/')}>
+              <img src="/logo.png" alt="EvilElite Trading Logo" className="h-10 w-auto object-contain drop-shadow-md" />
+              <span className="font-display font-extrabold tracking-[0.15em] text-lg text-zinc-100 uppercase leading-none">EVIL ELITE</span>
             </div>
             <span className="text-[8px] font-mono border border-gold-500/30 text-gold-400 font-bold px-2 py-0.5 rounded bg-gold-950/20">ADMIN</span>
           </div>

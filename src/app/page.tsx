@@ -492,12 +492,8 @@ export default function Home() {
             </div>
 
             {/* Center Monogram Shield Logo & Brand name */}
-            <div className="flex items-center gap-2">
-              <svg viewBox="0 0 100 100" className="w-8 h-8 text-gold-400 fill-current shrink-0">
-                <path d="M50 10 L80 25 L80 60 C80 75, 50 90, 50 90 C50 90, 20 75, 20 60 L20 25 Z" fill="none" stroke="#D4AF37" strokeWidth="2.5" />
-                <path d="M35 32 H47 V38 H38 V44 H45 V50 H38 V56 H47 V62 H35 Z" fill="#D4AF37" />
-                <path d="M65 32 H53 V38 H62 V44 H55 V50 H62 V56 H53 V62 H65 Z" fill="#D4AF37" />
-              </svg>
+            <div className="flex items-center gap-3">
+              <img src="/logo.png" alt="EvilElite Trading Logo" className="h-10 w-auto object-contain drop-shadow-md" />
               <div className="flex flex-col text-left">
                 <span className="font-display font-extrabold tracking-[0.25em] text-[10px] text-zinc-100 uppercase leading-none">EVILELITE</span>
                 <span className="text-[6.5px] font-mono tracking-[0.4em] text-gold-400 uppercase font-black pl-0.5 mt-0.5 leading-none">TRADING</span>

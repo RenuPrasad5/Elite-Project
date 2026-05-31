@@ -93,13 +93,11 @@ export default function SignupPage() {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex items-center justify-center w-12 h-12 rounded-full bg-gold-950/50 border border-gold-500/30 mb-4"
+            className="mb-4 flex items-center gap-4"
           >
-            <Sparkles className="w-6 h-6 text-gold-400" />
+            <img src="/logo.png" alt="EvilElite Trading Logo" className="h-16 w-auto object-contain drop-shadow-md" />
+            <span className="font-display font-extrabold tracking-[0.15em] text-2xl text-zinc-100 uppercase leading-none">EVIL ELITE</span>
           </motion.div>
-          <h2 className="text-3xl font-display font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-zinc-100 to-zinc-400">
-            EVIL ELITE
-          </h2>
           <p className="text-xs text-zinc-500 tracking-wider uppercase mt-1">
             Initialize Operator Profile
           </p>

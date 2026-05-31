@@ -13,6 +13,7 @@ export const PublicNavbar = () => {
 
   const navLinks = [
     { label: 'HOME', href: '/' },
+    { label: 'MARKETS', href: '/markets' },
     { label: 'PRODUCTS', href: '/products' },
     { label: 'ABOUT US', href: '/about' },
     { label: 'PROGRAMS', href: '/programs' },
@@ -28,17 +29,8 @@ export const PublicNavbar = () => {
         
         {/* Logo Area */}
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push('/')}>
-          <svg viewBox="0 0 100 100" className="w-9 h-9 text-gold-400 fill-current shrink-0">
-            <path d="M50 10 L80 25 L80 60 C80 75, 50 90, 50 90 C50 90, 20 75, 20 60 L20 25 Z" fill="none" stroke="#D4AF37" strokeWidth="2.5" />
-            <path d="M50 16 L74 28 L74 58 C74 70, 50 82, 50 82 C50 82, 26 70, 26 58 L26 28 Z" fill="rgba(212,175,55,0.03)" />
-            <path d="M35 32 H47 V38 H38 V44 H45 V50 H38 V56 H47 V62 H35 Z" fill="#D4AF37" />
-            <path d="M65 32 H53 V38 H62 V44 H55 V50 H62 V56 H53 V62 H65 Z" fill="#D4AF37" />
-            <line x1="50" y1="24" x2="50" y2="76" stroke="#D4AF37" strokeWidth="1.5" strokeDasharray="2 2" />
-          </svg>
-          <div className="flex flex-col">
-            <span className="font-display font-extrabold tracking-[0.25em] text-xs text-zinc-100 uppercase leading-none">EVILELITE</span>
-            <span className="text-[7.5px] font-mono tracking-[0.4em] text-gold-400 uppercase font-black pl-0.5 mt-0.5 leading-none">TRADING</span>
-          </div>
+          <img src="/logo.png" alt="EvilElite Trading Logo" className="h-12 w-auto object-contain drop-shadow-md" />
+          <span className="font-display font-extrabold tracking-[0.15em] text-lg text-zinc-100 uppercase leading-none">EVIL ELITE</span>
         </div>
 
         {/* Desktop Navigation Links */}

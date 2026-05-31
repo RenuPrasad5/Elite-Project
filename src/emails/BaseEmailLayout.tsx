@@ -46,11 +46,9 @@ export const BaseEmailLayout: React.FC<BaseEmailLayoutProps> = ({ children, prev
         <Body className="bg-[#020202] text-zinc-100 font-sans mx-auto">
           <Container className="bg-[#050505] border border-zinc-900 rounded-lg mx-auto p-8 my-10 max-w-[600px] overflow-hidden">
             {/* Header / Logo */}
-            <Section className="mb-8 flex justify-center">
-              <div className="w-12 h-12 bg-gold-950/50 border border-gold-500/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Text className="text-gold-400 font-bold m-0 text-xl text-center">EE</Text>
-              </div>
-              <Text className="text-center font-bold tracking-widest text-xl m-0 text-zinc-100">
+            <Section className="mb-8 text-center">
+              <Img src="/logo.png" alt="EvilElite Trading Logo" className="h-16 w-auto mx-auto object-contain mb-4" />
+              <Text className="text-center font-bold tracking-[0.15em] text-xl m-0 text-zinc-100">
                 EVIL ELITE
               </Text>
             </Section>

@@ -341,13 +341,9 @@ export default function DashboardPage() {
 
       {/* MOBILE HEADER */}
       <header className="md:hidden w-full h-16 bg-[#050505] border-b border-zinc-900 absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-4">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-sm bg-gradient-to-br from-gold-600 to-gold-800 flex items-center justify-center border border-gold-500/30">
-            <span className="text-zinc-950 font-display font-bold text-[10px]">EE</span>
-          </div>
-          <span className="font-display font-bold tracking-widest text-sm bg-gradient-to-b from-zinc-100 to-zinc-400 bg-clip-text text-transparent">
-            EVIL ELITE
-          </span>
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push('/')}>
+          <img src="/logo.png" alt="EvilElite Trading Logo" className="h-8 w-auto object-contain drop-shadow-md" />
+          <span className="font-display font-extrabold tracking-[0.15em] text-sm text-zinc-100 uppercase leading-none">EVIL ELITE</span>
         </div>
       </header>
 
@@ -359,13 +355,9 @@ export default function DashboardPage() {
       `}>
         <div className="flex flex-col flex-1 p-5 space-y-6 overflow-y-auto">
           
-          <div className="hidden md:flex items-center gap-3 pb-2 border-b border-zinc-900/50">
-            <div className="w-8 h-8 rounded-sm bg-gradient-to-br from-gold-600 to-gold-800 flex items-center justify-center border border-gold-500/30 shadow-[0_0_15px_rgba(204,155,51,0.2)]">
-              <span className="text-zinc-950 font-display font-bold text-xs">EE</span>
-            </div>
-            <span className="font-display font-bold tracking-widest text-base bg-gradient-to-b from-zinc-100 to-zinc-400 bg-clip-text text-transparent">
-              EVIL ELITE
-            </span>
+          <div className="hidden md:flex items-center gap-3 pb-2 border-b border-zinc-900/50 cursor-pointer" onClick={() => router.push('/')}>
+            <img src="/logo.png" alt="EvilElite Trading Logo" className="h-10 w-auto object-contain drop-shadow-md" />
+            <span className="font-display font-extrabold tracking-[0.15em] text-lg text-zinc-100 uppercase leading-none">EVIL ELITE</span>
           </div>
 
           <div className="p-3 bg-zinc-950/60 border border-zinc-900/80 rounded-md space-y-3">
