@@ -35,7 +35,7 @@ function isRateLimited(ip: string): boolean {
 export async function GET(request: NextRequest) {
   try {
     // Extract IP for rate limiting
-    const ip = request.ip || request.headers.get('x-forwarded-for') || 'anonymous';
+    const ip = request.headers.get('x-forwarded-for') || 'anonymous';
     
     if (isRateLimited(ip)) {
       return NextResponse.json(
