@@ -17,6 +17,7 @@ export const PublicNavbar = () => {
   // Conditional Navigation Links
   const publicLinks = [
     { label: 'HOME', href: '/' },
+    { label: 'MARKETS', href: '/markets' },
     { label: 'PRODUCTS', href: '/products' },
     { label: 'ABOUT US', href: '/about' },
     { label: 'RULES', href: '/rules' },
@@ -27,6 +28,7 @@ export const PublicNavbar = () => {
 
   const authenticatedLinks = [
     { label: 'DASHBOARD', href: '/dashboard' },
+    { label: 'MARKETS', href: '/markets' },
     { label: 'PRODUCTS', href: '/products' },
     { label: 'ABOUT US', href: '/about' },
     { label: 'RULES', href: '/rules' },
