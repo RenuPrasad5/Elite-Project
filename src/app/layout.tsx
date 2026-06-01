@@ -3,6 +3,7 @@ import { Space_Grotesk, Inter } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { GamificationProvider } from "@/context/GamificationContext";
+import { GoogleAnalytics } from '@next/third-parties/google';
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -89,6 +90,7 @@ export default function RootLayout({
             </GamificationProvider>
           </CartProvider>
         </AuthProvider>
+        <GoogleAnalytics gaId="G-BDQR8796FH" />
       </body>
     </html>
   );
